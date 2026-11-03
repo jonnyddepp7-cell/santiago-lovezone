@@ -1,0 +1,185 @@
+
+.friends-page {
+  padding: 30px;
+  color: #352744;
+}
+
+.friends-heading {
+  margin-bottom: 25px;
+}
+
+.friends-label {
+  color: #a36bd2;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.friends-heading h1 {
+  margin: 8px 0;
+  font-size: 27px;
+  color: #58317f;
+}
+
+.friends-heading p {
+  color: #999;
+  font-size: 14px;
+}
+
+.friends-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.friends-tabs button {
+  padding: 12px 18px;
+  border: 1px solid #eee2f7;
+  border-radius: 10px;
+  background: white;
+  color: #76558e;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.friends-tabs button.selected {
+  background: #8951c9;
+  color: white;
+  border-color: #8951c9;
+}
+
+.friends-search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.friends-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #eadff2;
+  border-radius: 11px;
+  outline: none;
+  font-size: 14px;
+}
+
+.friends-search input:focus {
+  border-color: #8951c9;
+}
+
+.friends-search button,
+.friend-card > button {
+  padding: 12px 17px;
+  border: none;
+  border-radius: 10px;
+  background: #8951c9;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.friends-search button:disabled {
+  opacity: 0.6;
+}
+
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #f0e8f5;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px #58317f08;
+}
+
+.friend-avatar {
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #8951c9, #eb79ad);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.friend-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.friend-info strong {
+  color: #49345b;
+  font-size: 14px;
+}
+
+.friend-info span {
+  color: #a49aaa;
+  font-size: 12px;
+}
+
+.friend-card > .reject-button {
+  background: #fff0f3;
+  color: #d34e70;
+}
+
+.friends-error,
+.friends-message {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.friends-error {
+  background: #fff0f2;
+  color: #c53d59;
+}
+
+.friends-message {
+  background: #f0fbf3;
+  color: #27844b;
+}
+
+.friends-empty {
+  padding: 25px;
+  text-align: center;
+  color: #999;
+  background: white;
+  border-radius: 14px;
+}
+
+@media (max-width: 600px) {
+  .friends-page {
+    padding: 18px;
+  }
+
+  .friends-heading h1 {
+    font-size: 22px;
+  }
+
+  .friends-search {
+    flex-direction: column;
+  }
+
+  .friend-card {
+    flex-wrap: wrap;
+  }
+
+  .friend-info {
+    flex-basis: 60%;
+  }
+}
