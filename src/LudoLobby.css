@@ -1,0 +1,215 @@
+.ludo-page {
+  padding: 28px;
+  color: #30243c;
+}
+
+.ludo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.ludo-header h1 {
+  margin: 7px 0;
+  font-size: 30px;
+}
+
+.ludo-header p,
+.ludo-panel p {
+  color: #82788d;
+  line-height: 1.6;
+}
+
+.ludo-eyebrow {
+  color: #8951c9;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.ludo-back,
+.ludo-refresh,
+.ludo-panel button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  background: #8951c9;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ludo-back {
+  background: #f1eafa;
+  color: #6936a7;
+}
+
+.ludo-panel {
+  padding: 23px;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid #eee8f4;
+  border-radius: 16px;
+  box-shadow: 0 5px 22px rgba(60, 35, 85, .035);
+}
+
+.ludo-panel h2 {
+  margin: 5px 0;
+}
+
+.ludo-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.ludo-option-icon {
+  font-size: 35px;
+  margin-bottom: 12px;
+}
+
+.ludo-panel label {
+  display: block;
+  margin: 17px 0 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ludo-panel input,
+.ludo-panel select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  margin-bottom: 13px;
+  border: 1px solid #e6ddec;
+  border-radius: 9px;
+  background: white;
+  color: #30243c;
+}
+
+.ludo-panel > button,
+.ludo-panel .ludo-inline-controls button {
+  min-height: 43px;
+}
+
+.ludo-panel button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.ludo-message {
+  padding: 13px 16px;
+  margin-bottom: 18px;
+  border: 1px solid #e6d8fa;
+  border-radius: 11px;
+  background: #f5efff;
+  color: #6936a7;
+}
+
+.ludo-room-heading,
+.ludo-section-heading,
+.ludo-invitation,
+.ludo-inline-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.ludo-player-list,
+.ludo-invitation-list {
+  display: grid;
+  gap: 11px;
+  margin: 20px 0;
+}
+
+.ludo-player,
+.ludo-invitation {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px;
+  border: 1px solid #eee8f4;
+  border-radius: 12px;
+}
+
+.ludo-player > div,
+.ludo-invitation > div:first-child {
+  flex: 1;
+}
+
+.ludo-player strong,
+.ludo-player small,
+.ludo-invitation strong,
+.ludo-invitation small {
+  display: block;
+}
+
+.ludo-player small,
+.ludo-invitation small {
+  margin-top: 4px;
+  color: #91879c;
+  font-size: 12px;
+}
+
+.ludo-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.ludo-color.red { background: #e64d5d; }
+.ludo-color.blue { background: #4389e8; }
+.ludo-color.green { background: #28ad76; }
+.ludo-color.yellow { background: #e9bd35; }
+.ludo-color.empty { background: #ddd5e5; }
+
+.ludo-you,
+.ludo-section-heading > span {
+  color: #6936a7;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ludo-invite-controls {
+  padding-top: 16px;
+  border-top: 1px solid #eee8f4;
+}
+
+.ludo-invite-controls h3 {
+  margin-bottom: 10px;
+}
+
+.ludo-inline-controls select {
+  flex: 1;
+  margin: 0;
+}
+
+.ludo-waiting-note,
+.ludo-muted {
+  color: #91879c;
+  font-size: 13px;
+}
+
+.ludo-secondary {
+  background: #f1ebf7 !important;
+  color: #6936a7 !important;
+}
+
+.ludo-invitation-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .ludo-page { padding: 18px 14px; }
+  .ludo-header { flex-wrap: wrap; align-items: flex-start; }
+  .ludo-header h1 { font-size: 25px; }
+  .ludo-options { grid-template-columns: 1fr; }
+  .ludo-panel { padding: 17px; }
+  .ludo-room-heading { align-items: flex-start; }
+  .ludo-invitation { align-items: flex-start; flex-wrap: wrap; }
+  .ludo-invitation-actions { width: 100%; }
+}

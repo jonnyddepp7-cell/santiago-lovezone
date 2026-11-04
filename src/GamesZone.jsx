@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import './GamesZone.css'
+import LudoLobby from './LudoLobby'
 
 function GamesZone() {
+  const [showLudo, setShowLudo] = useState(false)
   const [loading, setLoading] = useState(true)
   const [member, setMember] = useState(false)
   const [admin, setAdmin] = useState(false)
@@ -94,6 +96,10 @@ function GamesZone() {
     }
 
     setBusyId(null)
+  }
+
+  if (showLudo) {
+    return <LudoLobby onBack={() => setShowLudo(false)} />
   }
 
   if (loading) {
@@ -195,8 +201,8 @@ function GamesZone() {
               </p>
               <div className="games-zone-card-footer">
                 <span>2–4 players</span>
-                <button type="button" disabled>
-                  Coming soon
+                <button type="button" onClick={() => setShowLudo(true)}>
+                  Play Ludo →
                 </button>
               </div>
             </article>
