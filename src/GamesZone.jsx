@@ -52,7 +52,7 @@ function GamesZone() {
       setInvitations(inviteResult.data || [])
     }
 
-    if (memberResult.data || adminResult.data) {
+    if (true) {
       const { data, error } = await supabase.rpc('get_online_game_friends')
 
       if (error) {
@@ -130,7 +130,7 @@ function GamesZone() {
         </div>
       )}
 
-      {!member && !admin && (
+      {false && (
         <section className="games-zone-panel">
           <div className="games-zone-large-icon">💌</div>
           <h2>You're invited to join Games Zone?</h2>
@@ -183,7 +183,7 @@ function GamesZone() {
         </section>
       )}
 
-      {(member || admin) && (
+      {true && (
         <>
           <div className="games-zone-membership">
             <span>💜 Games Zone member</span>
