@@ -285,9 +285,37 @@ function LudoLobby({ onBack }) {
             </div>
           </div>
 
+          {room.host_id === userId && players.length === room.max_players && room.status === 'waiting' && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true)
+                setMessage('')
+                const { error } = await supabase.rpc('start_ludo_match', {
+                  p_room_id: room.id,
+                })
+                if (error) {
+                  setMessage(error.message)
+                } else {
+                  await loadRoom(room.id)
+                  setMessage('Match started! The game board is our next step.')
+                }
+                setBusy(false)
+              }}
+            >
+              {busy ? 'Starting...' : '🎲 Start Match'}
+            </button>
+          )}
+
+          {room.status === 'playing' && (
+            <div className="ludo-message">
+              Match started. Next we will connect the board, dice and token moves.
+            </div>
+          )}
+
           <p className="ludo-waiting-note">
             Share the room code with friends or invite them directly.
-            The playable board is the next build step.
           </p>
 
           <button
