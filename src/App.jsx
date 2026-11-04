@@ -1,24 +1,107 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from './supabase'
 import './App.css'
 import Friends from './Friends'
-
-const chats = [
-  { name: 'Sophia Williams', message: 'I miss you already ❤️', time: '10:42', avatar: 'S', color: 'pink', unread: 2 },
-  { name: 'Daniel James', message: 'Are we playing tonight?', time: '09:35', avatar: 'D', color: 'purple', unread: 1 },
-  { name: 'Amara Johnson', message: 'Thank you so much 😊', time: 'Yesterday', avatar: 'A', color: 'orange', unread: 0 },
-  { name: 'Michael Brown', message: 'Send me the pictures!', time: 'Yesterday', avatar: 'M', color: 'blue', unread: 0 },
-]
+import Messages from './Messages'
 
 const games = [
-  { icon: '💗', name: 'Truth or Dare', description: 'Discover secrets and have fun.', tag: 'POPULAR' },
-  { icon: '💕', name: 'Love Quiz', description: 'How well do you know each other?', tag: 'COUPLES' },
-  { icon: '🎯', name: 'Would You Rather', description: 'Make difficult and funny choices.', tag: 'FUN' },
-  { icon: '💬', name: '21 Questions', description: 'Ask questions and connect deeper.', tag: 'TRENDING' },
+  {
+    icon: '💗',
+    name: 'Truth or Dare',
+    description: 'Discover secrets and have fun.',
+    tag: 'POPULAR',
+  },
+  {
+    icon: '💕',
+    name: 'Love Quiz',
+    description: 'How well do you know each other?',
+    tag: 'COUPLES',
+  },
+  {
+    icon: '🎯',
+    name: 'Would You Rather',
+    description: 'Make difficult and funny choices.',
+    tag: 'FUN',
+  },
+  {
+    icon: '💬',
+    name: '21 Questions',
+    description: 'Ask questions and connect deeper.',
+    tag: 'TRENDING',
+  },
 ]
 
 function App() {
   const [activePage, setActivePage] = useState('home')
+  const [profile, setProfile] = useState(null)
+  const [friendCount, setFriendCount] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [profileError, setProfileError] = useState('')
+
+  useEffect(() => {
+    let mounted = true
+
+    async function loadDashboard() {
+      setLoading(true)
+      setProfileError('')
+
+      const { data: { user }, error: authError } =
+        await supabase.auth.getUser()
+
+      if (authError || !user) {
+        if (mounted) {
+          setProfile(null)
+          setProfileError('Please sign in to view your dashboard.')
+          setLoading(false)
+        }
+        return
+      }
+
+      const { data: profileData, error: profileLoadError } =
+        await supabase
+          .from('profiles')
+          .select('username, display_name')
+          .eq('id', user.id)
+          .maybeSingle()
+
+      const { data: friendsData, error: friendsError } =
+        await supabase
+          .from('my_friends')
+          .select('id')
+
+      if (!mounted) return
+
+      if (profileLoadError) {
+        setProfileError('Could not load your profile.')
+      } else {
+        setProfile({
+          name:
+            profileData?.display_name ||
+            user.user_metadata?.display_name ||
+            profileData?.username ||
+            user.email?.split('@')[0] ||
+            'Lovezone User',
+          username: profileData?.username || '',
+        })
+      }
+
+      if (!friendsError) {
+        setFriendCount(friendsData?.length || 0)
+      }
+
+      setLoading(false)
+    }
+
+    loadDashboard()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const displayName = profile?.name || 'Lovezone User'
+  const initial = displayName.charAt(0).toUpperCase()
 
   return (
     <div className="app-shell">
@@ -42,9 +125,13 @@ function App() {
             ⌂ <span>Home</span>
           </button>
 
-          <a className="nav-link" href="#chats">
-            ▣ <span>Messages</span><b>3</b>
-          </a>
+          <button
+            className={`nav-link ${activePage === 'messages' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setActivePage('messages')}
+          >
+            ▣ <span>Messages</span>
+          </button>
 
           <button
             className={`nav-link ${activePage === 'friends' ? 'active' : ''}`}
@@ -73,12 +160,32 @@ function App() {
           </a>
 
           <div className="profile-mini">
-            <div className="avatar purple">S</div>
+            <div className="avatar purple">{initial}</div>
+
             <div>
-              <strong>Santiago</strong>
-              <small>My profile</small>
+              <strong>{loading ? 'Loading...' : displayName}</strong>
+              <small>
+                {profile?.username
+                  ? `@${profile.username}`
+                  : 'My profile'}
+              </small>
             </div>
-            <span>•••</span>
+
+            <button
+              type="button"
+              aria-label="Sign out"
+              onClick={async () => {
+                const { error } = await supabase.auth.signOut()
+
+                if (error) {
+                  alert(error.message)
+                } else {
+                  window.location.reload()
+                }
+              }}
+            >
+              ↪
+            </button>
           </div>
         </div>
       </aside>
@@ -86,30 +193,47 @@ function App() {
       <main className="main-content" id="home">
         {activePage === 'friends' ? (
           <Friends />
+        ) : activePage === 'messages' ? (
+          <Messages />
         ) : (
           <>
             <header className="topbar">
               <div>
-                <h1>Good morning, Santiago! 👋</h1>
-                <p>Welcome to your happy place. Let's connect today.</p>
+                <h1>
+                  {loading
+                    ? 'Welcome to Lovezone!'
+                    : `Hello, ${displayName}!`} 👋
+                </h1>
+                <p>Your space to connect, chat, play, and love.</p>
               </div>
 
               <div className="top-actions">
                 <button className="icon-button" aria-label="Notifications">
                   ♧
                 </button>
-                <div className="avatar purple">S</div>
+                <div className="avatar purple">{initial}</div>
               </div>
             </header>
+
+            {profileError && (
+              <div className="panel">
+                <p>{profileError}</p>
+              </div>
+            )}
 
             <section className="welcome-banner">
               <div>
                 <span className="eyebrow">YOUR SOCIAL SPACE ❤️</span>
                 <h2>Connect. Chat. Play. Love.</h2>
                 <p>Good conversations create beautiful memories.</p>
-                <a href="#chats" className="banner-button">
-                  Start chatting →
-                </a>
+
+                <button
+                  type="button"
+                  className="banner-button"
+                  onClick={() => setActivePage('friends')}
+                >
+                  Find friends →
+                </button>
               </div>
 
               <div className="banner-heart">💜</div>
@@ -118,20 +242,23 @@ function App() {
             <section className="stats-grid">
               <div className="stat-card">
                 <span>💬</span>
-                <p>Total messages</p>
-                <h2>128</h2>
+                <p>Messages</p>
+                <h2>Not available yet</h2>
+                <small>Messaging is not connected yet.</small>
               </div>
 
               <div className="stat-card">
                 <span>👥</span>
-                <p>Friends online</p>
-                <h2>12</h2>
+                <p>Accepted friends</p>
+                <h2>{loading ? '...' : friendCount}</h2>
+                <small>Based on accepted friend requests.</small>
               </div>
 
               <div className="stat-card">
                 <span>🎮</span>
                 <p>Games played</p>
-                <h2>24</h2>
+                <h2>Not available yet</h2>
+                <small>Game tracking is not connected yet.</small>
               </div>
             </section>
 
@@ -140,60 +267,66 @@ function App() {
                 <div className="section-heading">
                   <div>
                     <h2>Recent Chats</h2>
-                    <p>Your latest conversations</p>
+                    <p>Your conversations will appear here.</p>
                   </div>
-                  <a href="#chats">View all →</a>
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('messages')}
+                  >
+                    Open messages →
+                  </button>
                 </div>
 
-                <div className="chat-list">
-                  {chats.map((chat) => (
-                    <div className="chat-item" key={chat.name}>
-                      <div className={`avatar ${chat.color}`}>
-                        {chat.avatar}
-                      </div>
-
-                      <div className="chat-details">
-                        <strong>{chat.name}</strong>
-                        <p>{chat.message}</p>
-                      </div>
-
-                      <div className="chat-meta">
-                        <small>{chat.time}</small>
-                        {chat.unread > 0 && (
-                          <span className="unread">{chat.unread}</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                <div className="empty-state">
+                  <div className="game-icon">💬</div>
+                  <h3>No conversations to show</h3>
+                  <p>
+                    Your real conversations will appear here when you start
+                    messaging friends.
+                  </p>
                 </div>
               </div>
 
               <div className="panel" id="friends">
                 <div className="section-heading">
                   <div>
-                    <h2>Online Friends</h2>
-                    <p>People ready to chat</p>
+                    <h2>Your Friends</h2>
+                    <p>
+                      {friendCount === 1
+                        ? 'You have 1 accepted friend.'
+                        : `You have ${friendCount} accepted friends.`}
+                    </p>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setActivePage('friends')}
                   >
-                    See all →
+                    Manage friends →
                   </button>
                 </div>
 
-                <div className="online-friends">
-                  {['Sophia', 'Daniel', 'Amara', 'Michael'].map((friend, index) => (
-                    <div className="friend" key={friend}>
-                      <div className={`avatar ${['pink', 'purple', 'orange', 'blue'][index]}`}>
-                        {friend[0]}
-                        <i className="online-dot"></i>
-                      </div>
-                      <strong>{friend}</strong>
-                      <small>Online</small>
-                    </div>
-                  ))}
+                <div className="empty-state">
+                  <div className="game-icon">👥</div>
+
+                  <h3>
+                    {friendCount
+                      ? 'Your friends are ready'
+                      : 'Build your circle'}
+                  </h3>
+
+                  <p>
+                    {friendCount
+                      ? 'Open Friends to view your accepted friends.'
+                      : 'Search for people by username and send friend requests.'}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('friends')}
+                  >
+                    Find friends →
+                  </button>
                 </div>
               </div>
             </section>
@@ -204,7 +337,6 @@ function App() {
                   <h2>🎮 Couples Games Centre</h2>
                   <p>Make every moment more exciting together.</p>
                 </div>
-                <a href="#games">Explore games →</a>
               </div>
 
               <div className="games-grid">
@@ -214,10 +346,14 @@ function App() {
                     <div className="game-icon">{game.icon}</div>
                     <h3>{game.name}</h3>
                     <p>{game.description}</p>
+
                     <button
-                      onClick={() => alert(`${game.name} is coming soon!`)}
+                      type="button"
+                      onClick={() =>
+                        alert(`${game.name} is not available yet.`)
+                      }
                     >
-                      Play now →
+                      Coming soon
                     </button>
                   </div>
                 ))}
