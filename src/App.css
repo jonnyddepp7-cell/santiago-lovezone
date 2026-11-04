@@ -108,6 +108,12 @@ button {
 }
 
 .nav-link {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
   display: flex;
   align-items: center;
   gap: 14px;

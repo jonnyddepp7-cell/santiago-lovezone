@@ -4,6 +4,8 @@ import { supabase } from './supabase'
 import './App.css'
 import Friends from './Friends'
 import Messages from './Messages'
+import GamesZone from './GamesZone'
+import { useGamePresence } from './GamePresence'
 
 const games = [
   {
@@ -34,10 +36,12 @@ const games = [
 
 function App() {
   const [activePage, setActivePage] = useState('home')
+  const [userId, setUserId] = useState(null)
   const [profile, setProfile] = useState(null)
   const [friendCount, setFriendCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [profileError, setProfileError] = useState('')
+  const { setPlayingGame } = useGamePresence(userId)
 
   useEffect(() => {
     let mounted = true
@@ -50,6 +54,7 @@ function App() {
         await supabase.auth.getUser()
 
       if (authError || !user) {
+        if (mounted) setUserId(null)
         if (mounted) {
           setProfile(null)
           setProfileError('Please sign in to view your dashboard.')
@@ -57,6 +62,8 @@ function App() {
         }
         return
       }
+
+      setUserId(user.id)
 
       const { data: profileData, error: profileLoadError } =
         await supabase
@@ -145,9 +152,16 @@ function App() {
             ♡ <span>Couples Zone</span>
           </a>
 
-          <a className="nav-link" href="#games">
+          <button
+            className={`nav-link ${activePage === 'games' ? 'active' : ''}`}
+            type="button"
+            onClick={() => {
+  alert('Games Centre button is working!')
+  setActivePage('games')
+}}
+          >
             ♧ <span>Games Centre</span>
-          </a>
+          </button>
 
           <a className="nav-link" href="#calls">
             ☎ <span>Calls</span>
@@ -195,6 +209,8 @@ function App() {
           <Friends />
         ) : activePage === 'messages' ? (
           <Messages />
+        ) : activePage === 'games' ? (
+          <GamesZone />
         ) : (
           <>
             <header className="topbar">
