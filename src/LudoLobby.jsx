@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import './LudoLobby.css'
+import LudoBoard from './LudoBoard'
 
 function LudoLobby({ onBack }) {
   const [userId, setUserId] = useState(null)
@@ -204,6 +205,18 @@ function LudoLobby({ onBack }) {
 
   if (loading) {
     return <section className="ludo-page"><p>Loading Ludo Naija...</p></section>
+  }
+
+  if (room?.status === 'playing' || room?.status === 'finished') {
+    return (
+      <LudoBoard
+        room={room}
+        players={players}
+        userId={userId}
+        onBack={onBack}
+        onRefresh={() => loadRoom(room.id)}
+      />
+    )
   }
 
   return (
